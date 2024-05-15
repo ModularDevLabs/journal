@@ -1,22 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Journal</title>
-  <link rel="stylesheet" href="journal.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        main {
+            padding: 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        #entries-list {
+            margin-top: 1rem;
+        }
+
+        .entry {
+            border-bottom: 1px solid #ccc;
+            padding: 0.5rem 0;
+        }
+
+        .timestamp {
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        @media (max-width: 600px) {
+            textarea {
+                height: 100px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>My Journal</h1>
-  <div class="content">
-    <ul id="entries">
-    </ul>
-    <form id="entry-form">
-      <input type="datetime" id="timestamp" value="<?php echo date('Y-m-d h:i:s A'); ?>">
-      <input type="text" id="message" placeholder="Enter your message...">
-      <button type="submit">Save</button>
-    </form>
-  </div>
-  <script src="journal.js"></script>
+    <header>
+        <h1>My Journal</h1>
+    </header>
+    <main>
+        <textarea id="journal-entry" placeholder="Write your journal entry here..."></textarea>
+        <button id="save-entry">Save Entry</button>
+        <div id="entries-list">
+            <!-- Journal entries will be displayed here -->
+        </div>
+    </main>
+    <script>
+        // Save entry to local storage
+        const saveEntry = (entry) => {
+            const timestamp = new Date().toISOString();
+            const entries = JSON.parse(localStorage.getItem('entries')) || [];
+            entries.push({ entry, timestamp });
+            localStorage.setItem('entries', JSON.stringify(entries));
+        };
+
+        // Load entries from local storage
+        const loadEntries = () => {
+            return JSON.parse(localStorage.getItem('entries')) || [];
+        };
+
+        // Save entry when 'Save Entry' button is clicked
+        document.getElementById('save-entry').addEventListener('click', () => {
+            const entry = document.getElementById('journal-entry').value;
+            saveEntry(entry);
+            document.getElementById('journal-entry').value = '';
+            loadAndDisplayEntries();
+        });
+
+        // Load and display entries when the app starts
+        const loadAndDisplayEntries = () => {
+            const entries = loadEntries();
+            const entriesList = document.getElementById('entries-list');
+            entriesList.innerHTML = '';
+
+            entries.forEach((entry, index) => {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'entry';
+                entryDiv.innerHTML = `
+                    <p>${entry.entry}</p>
+                    <p class="timestamp">${new Date(entry.timestamp).toLocaleString()}</p>
+                `;
+                entriesList.appendChild(entryDiv);
+            });
+        };
+
+        loadAndDisplayEntries();
+    </script>
 </body>
 </html>
