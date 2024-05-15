@@ -3,21 +3,23 @@ const form = document.getElementById('entry-form');
 // Get the entries list element
 const entriesList = document.getElementById('entries');
 
-function saveEntry(timestamp, message) {
-  // Create a new list item element for the entry
+// Helper function to create a new entry element
+function createEntryElement(timestamp, message) {
   const listItem = document.createElement('li');
-  // Create the date element
   const dateElement = document.createElement('time');
   dateElement.setAttribute('datetime', timestamp);
   dateElement.textContent = new Date(timestamp).toLocaleString();
-  // Create the message element
   const messageElement = document.createElement('strong');
   messageElement.textContent = message;
-  // Append the elements to the list item
   listItem.appendChild(dateElement);
   listItem.appendChild(messageElement);
-  // Append the list item to the entries list
-  entriesList.appendChild(listItem);
+  return listItem;
+}
+
+// Update the saveEntry function to use the createEntryElement
+function saveEntry(timestamp, message) {
+  const entry = createEntryElement(timestamp, message);
+  entriesList.appendChild(entry);
 }
 
 form.addEventListener('submit', (event) => {
@@ -37,10 +39,5 @@ form.addEventListener('submit', (event) => {
 // Load existing entries from local storage
 const storedEntries = Object.keys(localStorage).forEach((key) => {
   const entryTimestamp = key.substring(7);
-  if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?: [\d]{1,2][:][\d]{1,2})?$/.test(entryTimestamp)) {
-    const entryMessage = localStorage.getItem(key);
-    if (entryMessage) {
-      saveEntry(entryTimestamp, entryMessage);
-    }
-  }
-});
+  if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?:[\d]{1[:})(?:[\d]:))?.test(?:),
+                          
